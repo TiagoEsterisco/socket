@@ -20,6 +20,17 @@
         <!-- Add your site or application content here -->
         <p>Hello world! This is HTML5 Boilerplate.</p>
 
+
+        <form action="" class="chat">
+
+            <label for="msg">Message:</label>
+            <input type="text" name="msg" class="msg">
+            <button>Send</button>
+
+        </form>
+
+        <div class="msg_flow"></div>
+
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
 
@@ -30,6 +41,26 @@
         $(function() {
           'use strict';
 
+            var ws;
+
+            $(".chat").submit(function(event) {
+                /* Act on the event */
+                event.preventDefault();
+
+                if(ws.readyState===1) {
+
+
+                    ws.send($(".msg").val());
+
+                    $(".msg_flow").append('<br>You: '+$(".msg").val());
+
+                    $(".msg").val("");
+                }
+
+
+
+            });
+
 
             function WebSocketTest()
             {
@@ -37,7 +68,7 @@
               {
                  console.log("WebSocket is supported by your Browser!");
                  // Let us open a web socket
-                 window.ws = new WebSocket("ws://127.0.0.1:9000/server.php");
+                 ws = new WebSocket("ws://127.0.0.1:9000/server.php");
                  ws.onopen = function()
                  {
                     // Web Socket is connected, send data using send()
@@ -49,6 +80,7 @@
                     var received_msg = evt.data;
                     console.log("Message is received...");
                     console.log(received_msg);
+                    $(".msg_flow").append('<br>Someone: '+received_msg);
                  };
                  ws.onclose = function()
                  {

@@ -58,7 +58,9 @@ while (true) {
             //prepare data to be sent to client
             $response_text = mask($received_text);
 
-            send_message($response_text); //send data
+            send_to_others($changed_socket,$response_text);
+
+            // send_message($response_text); //send data
             break 2; //exist this loop
         }
 
@@ -79,12 +81,27 @@ while (true) {
 // close the listening socket
 socket_close($sock);
 
+
+function send_to_others($user,$msg)
+{
+
+    global $clients;
+    foreach($clients as $changed_socket)
+    {
+        if($user != $changed_socket) {
+            @socket_write($changed_socket,$msg,strlen($msg));
+        }
+
+    }
+    return true;
+}
+
+
 function send_message($msg)
 {
     global $clients;
     foreach($clients as $changed_socket)
     {
-
         echo "Clients: $$changed_socket \n";
         @socket_write($changed_socket,$msg,strlen($msg));
     }
